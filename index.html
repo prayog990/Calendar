@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LP/ALP Quick Guide</title>
+    <style>
+        :root {
+            --bg: #121212;
+            --card: #1e1e1e;
+            --text: #e0e0e0;
+            --accent: #4caf50;
+            --rhs-red: #ff5252;
+            --admin-gold: #ffd700;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        /* Header */
+        header {
+            background: #000;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        #app-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--accent);
+            cursor: pointer;
+        }
+
+        .header-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            background: var(--card);
+            border: 1px solid #444;
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        /* Container */
+        .container {
+            padding: 15px;
+        }
+
+        /* GRID VIEW (Circles) */
+        .grid-view {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            text-align: center;
+        }
+
+        .grid-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .circle-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--card);
+            border: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: var(--accent);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        /* LIST VIEW (Accordions) */
+        .list-view {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .list-item {
+            background: var(--card);
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .item-header {
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        /* Toggle Icons Logic */
+        .close-icon { display: none; font-size: 1.2rem; color: var(--rhs-red); }
+        .grid-focused .close-icon { display: block; }
+        .grid-focused .arrow-icon { display: none; }
+
+        .item-content {
+            padding: 0 15px 15px 15px;
+            display: none;
+            border-top: 1px solid #333;
+            background: #252525;
+        }
+
+        /* RHS Table Styles */
+        .rhs-table {
+            width: 100%;
+            margin-top: 10px;
+            border-collapse: collapse;
+        }
+
+        .rhs-table td {
+            padding: 8px;
+            border-bottom: 1px solid #444;
+        }
+
+        .dir-label {
+            color: var(--rhs-red);
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: block;
+        }
+
+        /* Speed Table Styles */
+        .speed-table {
+            width: 100%;
+            margin-top: 10px;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .speed-table th {
+            text-align: left;
+            color: var(--text-muted);
+            border-bottom: 1px solid #444;
+            padding: 5px;
+        }
+        .speed-table td {
+            padding: 10px 5px;
+            border-bottom: 1px solid #333;
+        }
+        .speed-val {
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .sp-15 { background: #5a2a00; color: #ffb74d; } /* Orange/Red for 15 */
+        .sp-30 { background: #1b3d1d; color: #81c784; } /* Green for 30 */
+
+        /* Section Speed Table */
+        .sec-speed-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+            text-align: center;
+        }
+        .sec-speed-table th, .sec-speed-table td {
+            border: 1px solid #444;
+            padding: 5px 2px;
+        }
+        .header-row { background: #222; color: var(--accent); }
+        .sub-header { background: #333; font-size: 0.65rem; }
+
+        /* Sub-menu styling for List View */
+        .sub-accordion {
+            margin: 5px 0;
+            border-left: 2px solid #444;
+            padding-left: 10px;
+        }
+        .sub-header-btn {
+            padding: 10px;
+            background: #2a2a2a;
+            margin-bottom: 2px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        /* Nested Logic for Sub-sections */
+        .sub-close { display: none; color: var(--rhs-red); font-size: 1.1rem; }
+        .sub-focused .sub-close { display: block; }
+        .sub-focused .sub-arrow { display: none; }
+
+        /* Popup Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid var(--accent);
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.2);
+        }
+        .modal-content h3 { margin-top: 0; color: var(--accent); font-size: 1.1rem; }
+        .modal-form { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+        .modal-form input {
+            background: #121212;
+            border: 1px solid #444;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            outline: none;
+        }
+        .modal-form input:focus { border-color: var(--accent); }
+        .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+        .save-btn { background: var(--accent); flex: 2; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .cancel-btn { background: #444; flex: 1; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; }
+
+        /* Admin Styles */
+        #admin-panel {
+            display: none;
+            background: #2a2a10;
+            border: 1px dashed var(--admin-gold);
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+        }
+
+        .admin-only {
+            display: none;
+        }
+
+        .delete-btn {
+            color: var(--rhs-red);
+            margin-left: 10px;
+            font-size: 0.8rem;
+        }
+
+        .show { display: block !important; }
+        .hidden { display: none !important; }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <div id="app-name" onclick="handleAdminTrigger()">LP/ALP Quick Guide</div>
+    <div class="header-btns">
+        <button class="icon-btn" title="Theme">🔘</button>
+        <button class="icon-btn" onclick="toggleMainView()" id="view-toggle-btn">List View</button>
+    </div>
+</header>
+
+<div class="container">
+    <!-- Secret Admin Panel -->
+    <div id="admin-panel">
+        <strong style="color:var(--admin-gold)">⚠️ ADMIN MODE ON</strong>
+        <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="icon-btn" onclick="openAddModal('rhs')">+ Add RHS Signal</button>
+            <button class="icon-btn" onclick="openAddModal('loop')">+ Add Loop Speed</button>
+            <button class="icon-btn" onclick="openAddModal('section')">+ Add Sec Speed</button>
+        </div>
+    </div>
+
+    <!-- Universal Add Modal Popup -->
+    <div id="add-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="modal-title">Add New Item</h3>
+            <div id="modal-form-fields" class="modal-form">
+                <!-- Inputs will be generated here -->
+            </div>
+            <div class="modal-btns">
+                <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+                <button class="save-btn" onclick="saveModalData()">Save Information</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main-content">
+        <!-- Grid View (Default) -->
+        <div id="grid-container" class="grid-view">
+            <div class="grid-item" onclick="openSection('rhs-section')">
+                <div class="circle-icon">RHS</div>
+                <span>Right Hand Signal</span>
+            </div>
+            <div class="grid-item" onclick="openSection('speed-section')">
+                <div class="circle-icon">SPEED</div>
+                <span>Speed</span>
+            </div>
+            <div class="grid-item">
+                <div class="circle-icon">XXXX</div>
+                <span>XXXXXXX</span>
+            </div>
+            <div class="grid-item">
+                <div class="circle-icon">ZZZZ</div>
+                <span>ZZZZZZZ</span>
+            </div>
+        </div>
+
+        <!-- List View (Initially Hidden) -->
+        <div id="list-container" class="list-view hidden">
+            <!-- RHS Section -->
+            <div class="list-item" id="rhs-section">
+                <div class="item-header" onclick="toggleAccordion('rhs-content')">
+                    <span>Right Hand Signal</span>
+                    <span class="arrow-icon">▼</span>
+                    <span class="close-icon" onclick="closeSection(event, 'rhs-section')">✖</span>
+                </div>
+                <div class="item-content" id="rhs-content">
+                    <span class="dir-label">UP Direction</span>
+                    <table class="rhs-table" id="up-rhs-table">
+                        <!-- UP Data -->
+                    </table>
+                    
+                    <span class="dir-label">Down Direction</span>
+                    <table class="rhs-table" id="dn-rhs-table">
+                        <!-- DN Data -->
+                    </table>
+                </div>
+            </div>
+
+            <!-- Speed Section -->
+            <div class="list-item" id="speed-section">
+                <div class="item-header" onclick="toggleAccordion('speed-content')">
+                    <span>Speed Limits</span>
+                    <span class="arrow-icon">▼</span>
+                    <span class="close-icon" onclick="closeSection(event, 'speed-section')">✖</span>
+                </div>
+                <div class="item-content" id="speed-content">
+                    <!-- Sub-menu (Grid style inside Grid View, List style inside List View) -->
+                    <div id="speed-sub-menu">
+                        <div class="grid-view sub-grid hidden" id="speed-grid">
+                            <div class="grid-item" onclick="showSubTable('loop')"><div class="circle-icon">LOOP</div><span>Loop Line</span></div>
+                            <div class="grid-item" onclick="showSubTable('section')"><div class="circle-icon">SEC</div><span>Section Speed</span></div>
+                        </div>
+                        <div id="speed-list-accordion">
+                            <!-- Loop Sub Section -->
+                            <div id="loop-sub-head" class="sub-header-btn" onclick="toggleSubAccordion('loop-wrap')">
+                                <span>Loop Line Speed</span>
+                                <span class="sub-arrow">▼</span>
+                                <span class="sub-close" onclick="closeSubTable(event, 'loop')">✖</span>
+                            </div>
+                            <div id="loop-wrap" class="sub-accordion hidden">
+                                <table class="speed-table"><tbody id="loop-speed-table"></tbody></table>
+                            </div>
+                            
+                            <!-- Section Speed Sub Section -->
+                            <div id="section-sub-head" class="sub-header-btn" onclick="toggleSubAccordion('section-wrap')">
+                                <span>Section Speed</span>
+                                <span class="sub-arrow">▼</span>
+                                <span class="sub-close" onclick="closeSubTable(event, 'section')">✖</span>
+                            </div>
+                            <div id="section-wrap" class="sub-accordion hidden">
+                                <table class="sec-speed-table" id="section-speed-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // INITIAL DATA
+    let db = {
+        rhs: {
+            up: [
+                {id: 1, name: "MVG Distant", loc: "215/13-14"},
+                {id: 2, name: "MVG Home", loc: "216/21-22"},
+                {id: 3, name: "KMLR Home", loc: "412/02"}
+            ],
+            dn: [
+                {id: 4, name: "BHNS Distant", loc: "429/1-2"},
+                {id: 5, name: "BHNS Home", loc: "427/24-25"}
+            ]
+        },
+        loopSpeed: [
+            {id: 101, stn: "KRPU", line: "All Lines", speed: "15"},
+            {id: 102, stn: "MVF", line: "R/1, R/3", speed: "30"},
+            {id: 103, stn: "MVF", line: "R/4", speed: "15"},
+            {id: 104, stn: "JRT", line: "R/1, R/3", speed: "30"},
+            {id: 105, stn: "MVG", line: "R/1, R/3", speed: "30"},
+            {id: 106, stn: "CTS", line: "R/1, R/4", speed: "30"},
+            {id: 107, stn: "DIR", line: "R/1, R/4", speed: "30"}
+        ],
+        sectionSpeed: [
+            {id: 201, name: "KRPU - MVF", upMps: "65", upGoods: "65", dnMps: "45", dnGoods: "45"},
+            {id: 202, name: "MVF - CTS", upMps: "45", upGoods: "45", dnMps: "45", dnGoods: "45"}
+        ]
+    };
+
+    // Load from LocalStorage if exists
+    if(localStorage.getItem('alp_data')) {
+        db = JSON.parse(localStorage.getItem('alp_data'));
+    }
+
+    let adminClickCount = 0;
+    let isAdmin = false;
+    let currentView = 'grid'; // grid or list
+
+    function handleAdminTrigger() {
+        adminClickCount++;
+        if(adminClickCount === 5) {
+            isAdmin = !isAdmin;
+            const panel = document.getElementById('admin-panel');
+            if(isAdmin) {
+                panel.classList.add('show');
+                alert("Admin Mode: ON ✅");
+            } else {
+                panel.classList.remove('show');
+                alert("Admin Mode: OFF ❌");
+            }
+            renderAllTables();
+            adminClickCount = 0;
+        }
+        setTimeout(() => { if(adminClickCount > 0 && adminClickCount < 5) adminClickCount = 0; }, 2000);
+    }
+
+    function renderAllTables() {
+        renderRhsTables();
+        renderLoopSpeedTable();
+    }
+
+    function renderLoopSpeedTable() {
+        const table = document.getElementById('loop-speed-table');
+        table.innerHTML = db.loopSpeed.map(item => `
+            <tr>
+                <td style="font-weight:bold">${item.stn}</td>
+                <td style="color:#aaa">${item.line}</td>
+                <td>
+                    <span class="speed-val sp-${item.speed}">${item.speed}</span>
+                    ${isAdmin ? `<span class="delete-btn" onclick="deleteLoopSpeed(${item.id})">❌</span>` : ''}
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function deleteLoopSpeed(id) {
+        if(confirm('Kya aap is speed record ko delete krna chahte hain?')) {
+            db.loopSpeed = db.loopSpeed.filter(i => i.id !== id);
+            saveData();
+            renderLoopSpeedTable();
+        }
+    }
+
+    // Old prompt functions removed, using Universal Modal instead.
+
+    function toggleMainView() {
+        const grid = document.getElementById('grid-container');
+        const list = document.getElementById('list-container');
+        const btn = document.getElementById('view-toggle-btn');
+
+        if(currentView === 'grid') {
+            grid.classList.add('hidden');
+            list.classList.remove('hidden');
+            btn.innerText = "Grid View";
+            currentView = 'list';
+        } else {
+            grid.classList.remove('hidden');
+            list.classList.add('hidden');
+            btn.innerText = "List View";
+            currentView = 'grid';
+        }
+    }
+
+    function openSection(id) {
+        const grid = document.getElementById('grid-container');
+        const list = document.getElementById('list-container');
+        const allItems = document.querySelectorAll('.list-item');
+
+        if(currentView === 'grid') {
+            grid.classList.add('hidden');
+            list.classList.remove('hidden');
+            
+            allItems.forEach(item => {
+                if(item.id === id) {
+                    item.classList.remove('hidden');
+                    item.classList.add('grid-focused');
+                    document.getElementById(id.replace('-section', '-content')).style.display = 'block';
+                    
+                    // Universal Sub-Grid Logic
+                    const subGrid = item.querySelector('.sub-grid');
+                    const subAccordion = item.querySelector('[id$="-accordion"]');
+                    if(subGrid) {
+                        subGrid.classList.remove('hidden');
+                        if(subAccordion) subAccordion.classList.add('hidden');
+                    }
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        }
+    }
+
+    function showSubTable(type) {
+        const sectionContent = document.querySelector('.list-item:not(.hidden) .item-content');
+        const subGrid = sectionContent.querySelector('.sub-grid');
+        const subAccordion = sectionContent.querySelector('[id$="-accordion"]');
+
+        if(subGrid) subGrid.classList.add('hidden');
+        if(subAccordion) {
+            subAccordion.classList.remove('hidden');
+            const wrapId = type + '-wrap';
+            const headId = type + '-sub-head';
+            
+            // Close all first
+            subAccordion.querySelectorAll('.sub-accordion').forEach(el => el.classList.add('hidden'));
+            subAccordion.querySelectorAll('.sub-header-btn').forEach(el => el.classList.add('hidden'));
+            
+            // Open selected
+            document.getElementById(wrapId).classList.remove('hidden');
+            document.getElementById(headId).classList.remove('hidden');
+            document.getElementById(headId).classList.add('sub-focused');
+        }
+    }
+
+    function closeSubTable(e, type) {
+        e.stopPropagation();
+        if(currentView === 'grid') {
+            const sectionContent = document.querySelector('.list-item:not(.hidden) .item-content');
+            const subGrid = sectionContent.querySelector('.sub-grid');
+            const subAccordion = sectionContent.querySelector('[id$="-accordion"]');
+
+            if(subGrid) subGrid.classList.remove('hidden');
+            if(subAccordion) {
+                subAccordion.classList.add('hidden');
+                // Reset Sub-Headers for List View
+                subAccordion.querySelectorAll('.sub-header-btn').forEach(el => el.classList.remove('sub-focused', 'hidden'));
+                subAccordion.querySelectorAll('.sub-accordion').forEach(el => el.classList.add('hidden'));
+            }
+        }
+    }
+
+    function closeSection(e, id) {
+        e.stopPropagation();
+        const grid = document.getElementById('grid-container');
+        const list = document.getElementById('list-container');
+
+        grid.classList.remove('hidden');
+        list.classList.add('hidden');
+
+        document.querySelectorAll('.list-item').forEach(item => {
+            item.classList.remove('hidden', 'grid-focused');
+            document.getElementById(item.id.replace('-section', '-content')).style.display = 'none';
+            
+            // Universal Sub-UI Reset
+            const subGrid = item.querySelector('.sub-grid');
+            const subAccordion = item.querySelector('[id$="-accordion"]');
+            if(subGrid) subGrid.classList.add('hidden');
+            if(subAccordion) {
+                subAccordion.classList.remove('hidden');
+                subAccordion.querySelectorAll('.sub-header-btn').forEach(el => el.classList.remove('sub-focused', 'hidden'));
+                subAccordion.querySelectorAll('.sub-accordion').forEach(el => el.classList.add('hidden'));
+            }
+        });
+    }
+
+    function toggleSubAccordion(id) {
+        const el = document.getElementById(id);
+        el.classList.toggle('hidden');
+    }
+
+    function renderAllTables() {
+        renderRhsTables();
+        renderLoopSpeedTable();
+        renderSectionSpeedTable();
+    }
+
+    function renderSectionSpeedTable() {
+        const table = document.getElementById('section-speed-table');
+        let html = `
+            <tr class="header-row">
+                <th rowspan="2">Section Name</th>
+                <th colspan="2">UP Direction</th>
+                <th colspan="2">DN Direction</th>
+                ${isAdmin ? '<th rowspan="2">X</th>' : ''}
+            </tr>
+            <tr class="sub-header">
+                <th>MPS</th><th>Goods</th><th>MPS</th><th>Goods</th>
+            </tr>
+        `;
+        db.sectionSpeed.forEach(item => {
+            html += `
+                <tr>
+                    <td style="font-weight:bold">${item.name}</td>
+                    <td>${item.upMps}</td><td>${item.upGoods}</td>
+                    <td>${item.dnMps}</td><td>${item.dnGoods}</td>
+                    ${isAdmin ? `<td><span class="delete-btn" onclick="deleteSectionSpeed(${item.id})">❌</span></td>` : ''}
+                </tr>
+            `;
+        });
+        table.innerHTML = html;
+    }
+
+    let currentModalType = '';
+
+    function openAddModal(type) {
+        currentModalType = type;
+        const modal = document.getElementById('add-modal');
+        const title = document.getElementById('modal-title');
+        const fields = document.getElementById('modal-form-fields');
+        fields.innerHTML = '';
+        modal.style.display = 'flex';
+
+        if(type === 'rhs') {
+            title.innerText = 'Add RHS Signal';
+            fields.innerHTML = `
+                <input type="text" id="inp1" placeholder="Station & Signal Name">
+                <input type="text" id="inp2" placeholder="KM Location (e.g. 412/02)">
+                <input type="text" id="inp3" placeholder="Direction (up/dn)">
+            `;
+        } else if(type === 'loop') {
+            title.innerText = 'Add Loop Line Speed';
+            fields.innerHTML = `
+                <input type="text" id="inp1" placeholder="Station Code (e.g. KRPU)">
+                <input type="text" id="inp2" placeholder="Line Numbers (e.g. R/1, R/4)">
+                <input type="text" id="inp3" placeholder="Speed (15 or 30)">
+            `;
+        } else if(type === 'section') {
+            title.innerText = 'Add Section Speed';
+            fields.innerHTML = `
+                <input type="text" id="inp1" placeholder="Section Name (e.g. KRPU-MVF)">
+                <input type="text" id="inp2" placeholder="UP MPS Speed">
+                <input type="text" id="inp3" placeholder="UP Goods Speed">
+                <input type="text" id="inp4" placeholder="DN MPS Speed">
+                <input type="text" id="inp5" placeholder="DN Goods Speed">
+            `;
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('add-modal').style.display = 'none';
+    }
+
+    function saveModalData() {
+        const i1 = document.getElementById('inp1')?.value;
+        const i2 = document.getElementById('inp2')?.value;
+        const i3 = document.getElementById('inp3')?.value;
+        const i4 = document.getElementById('inp4')?.value;
+        const i5 = document.getElementById('inp5')?.value;
+
+        if(!i1) { alert("Please fill at least the name!"); return; }
+
+        if(currentModalType === 'rhs') {
+            const dir = i3.toLowerCase() === 'dn' ? 'dn' : 'up';
+            db.rhs[dir].push({ id: Date.now(), name: i1, loc: i2 });
+        } else if(currentModalType === 'loop') {
+            db.loopSpeed.push({ id: Date.now(), stn: i1, line: i2, speed: i3 });
+        } else if(currentModalType === 'section') {
+            db.sectionSpeed.push({ id: Date.now(), name: i1, upMps: i2, upGoods: i3, dnMps: i4, dnGoods: i5 });
+        }
+
+        saveData();
+        renderAllTables();
+        closeModal();
+    }
+
+    function deleteSectionSpeed(id) {
+        if(confirm('Delete krna hai?')) {
+            db.sectionSpeed = db.sectionSpeed.filter(i => i.id !== id);
+            saveData(); renderSectionSpeedTable();
+        }
+    }
+
+    function toggleAccordion(id) {
+        const sectionId = id.replace('-content', '-section');
+        const allItems = document.querySelectorAll('.list-item');
+        const content = document.getElementById(id);
+
+        // Check if Focus View is active (others are hidden)
+        let isFocusView = Array.from(allItems).some(item => item.classList.contains('hidden'));
+
+        if(isFocusView) {
+            // Show everything again (Back to main list)
+            allItems.forEach(item => {
+                item.classList.remove('hidden');
+                document.getElementById(item.id.replace('-section', '-content')).style.display = 'none';
+            });
+        } else {
+            // Enter Focus View: Hide others, show this
+            allItems.forEach(item => {
+                if(item.id !== sectionId) {
+                    item.classList.add('hidden');
+                }
+            });
+            content.style.display = 'block';
+        }
+    }
+
+    function renderRhsTables() {
+        const upTable = document.getElementById('up-rhs-table');
+        const dnTable = document.getElementById('dn-rhs-table');
+
+        upTable.innerHTML = db.rhs.up.map(item => `
+            <tr>
+                <td>• ${item.name}</td>
+                <td style="text-align:right">${item.loc} ${isAdmin ? `<span class="delete-btn" onclick="deleteRhs('up', ${item.id})">❌</span>` : ''}</td>
+            </tr>
+        `).join('');
+
+        dnTable.innerHTML = db.rhs.dn.map(item => `
+            <tr>
+                <td>• ${item.name}</td>
+                <td style="text-align:right">${item.loc} ${isAdmin ? `<span class="delete-btn" onclick="deleteRhs('dn', ${item.id})">❌</span>` : ''}</td>
+            </tr>
+        `).join('');
+    }
+
+    function deleteRhs(dir, id) {
+        if(confirm('Kya aap ise delete krna chahte hain?')) {
+            db.rhs[dir] = db.rhs[dir].filter(i => i.id !== id);
+            saveData();
+            renderRhsTables();
+        }
+    }
+
+    // Old prompt functions removed.
+
+    function saveData() {
+        localStorage.setItem('alp_data', JSON.stringify(db));
+    }
+
+    // Initial Load
+    renderAllTables();
+
+</script>
+</body>
+</html>
