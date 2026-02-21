@@ -22,49 +22,219 @@
 
         body {
             font-family: 'Noto Sans Devanagari', sans-serif;
-            background-color: #2c3e50; /* Darker background for contrast */
+            background-color: #2c3e50;
             margin: 0;
-            padding: 10px;
+            padding: 5px; /* Reduced padding */
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
+            align-items: flex-start; /* Align to top */
+            min-height: 100vh;
+            overflow-y: auto; /* Enable scroll if needed */
         }
 
         .calendar-container {
             width: 100%;
             max-width: 600px;
-            height: 95vh;
+            min-height: 98vh; /* Use dynamic height */
             background-color: var(--paper-bg);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border: 4px double var(--gold); /* Added Royal border */
+            border: 4px double var(--gold);
             border-radius: 8px;
             display: flex;
             flex-direction: column;
             position: relative;
+            margin-bottom: 10px;
         }
 
         /* --- Header Section --- */
         .top-banner {
             background-color: var(--header-bg);
             border-bottom: 2px solid var(--primary-red);
-            padding: 10px;
+            padding: 8px 10px;
             text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* --- Side Panel Styles --- */
+        .menu-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: var(--primary-red);
+            cursor: pointer;
+            z-index: 101;
+        }
+
+        .side-panel {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 280px;
+            height: 100%;
+            background: var(--paper-bg); /* Paper texture background */
+            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+            box-shadow: -5px 0 25px rgba(0,0,0,0.3);
+            z-index: 1000;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border-left: 3px double var(--gold);
+        }
+
+        .side-panel.open { right: 0; }
+
+        .panel-header {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary-red);
+            border-bottom: 3px double var(--gold);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+            font-family: 'Oswald', sans-serif;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            color: #333;
+            border: 1px solid #eee;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        }
+        .menu-item:active { transform: scale(0.98); background: #fff8e1; }
+
+        /* --- Custom Modal Styles --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: var(--paper-bg);
+            padding: 25px;
+            border: 3px double var(--gold);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .modal-header {
+            color: var(--primary-red);
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .modal-body {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .modal-btn {
+            background: var(--primary-red);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 999;
+        }
+
+        .panel-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-red);
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #333;
+            border: 1px solid #eee;
+        }
+
+        .lang-toggle {
+            display: flex;
+            background: #ddd;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .lang-btn {
+            padding: 5px 15px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .lang-btn.active {
+            background: var(--primary-red);
+            color: white;
         }
 
         .om-symbol {
-            font-size: 1.2rem;
+            font-size: 1rem; /* Smaller */
             color: var(--primary-red);
             font-weight: bold;
             letter-spacing: 2px;
         }
 
         .guru-title {
-            font-size: 2.2rem;
+            font-size: 1.8rem; /* Scaled down for mobile */
             color: var(--primary-red);
             font-weight: 700;
-            margin: 0;
+            margin: -2px 0;
             text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
             font-family: 'Oswald', sans-serif;
         }
@@ -228,10 +398,40 @@
 
     <div class="calendar-container">
         
+        <!-- Side Panel -->
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <div class="side-panel" id="sidePanel">
+        <div class="panel-header">Settings / सेटिंग्स</div>
+        
+        <div class="menu-item">
+            <span id="lang-label">Language / भाषा</span>
+            <div class="lang-toggle">
+                <button class="lang-btn active" id="btn-hi" onclick="setLanguage('hi')">हिन्दी</button>
+                <button class="lang-btn" id="btn-en" onclick="setLanguage('en')">EN</button>
+            </div>
+        </div>
+
+        <div class="menu-item" onclick="addBookmark()">
+            <span id="install-label">Add to Home Screen</span>
+            <span>📲</span>
+        </div>
+
+        <div class="menu-item" onclick="shareApp()" style="background: #e8f5e9; border-color: #c8e6c9;">
+            <span id="share-label">Share App / शेयर करें</span>
+            <span>📢</span>
+        </div>
+
+        <div style="margin-top: auto; font-size: 0.75rem; color: #888; text-align: center; font-weight: 600;">
+            File_name 1.4 | Developed by AJ
+        </div>
+    </div>
+
+    <div class="calendar-container">
         <div class="top-banner">
+            <button class="menu-btn" onclick="toggleMenu()">☰</button>
             <div class="om-symbol">।। जय गुरुदेव ।।</div>
             <div class="guru-title">JAI GURUDEV</div>
-            <div style="font-size: 0.8rem; color: #555; font-weight: 600; letter-spacing: 1px;">आध्यात्मिक दीवार कैलेंडर 2026</div>
+            <div id="sub-title" style="font-size: 0.75rem; color: #555; font-weight: 600; letter-spacing: 1px;">आध्यात्मिक दीवार कैलेंडर 2026</div>
         </div>
 
         <div class="month-header">
@@ -278,8 +478,28 @@
 <script>
     let currentYear = 2026;
     let currentMonth = 0; 
+    let currentLang = 'hi';
 
-    const monthNames = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+    const langData = {
+        hi: {
+            months: ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"],
+            weekdays: ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"],
+            subTitle: "आध्यात्मिक दीवार कैलेंडर 2026",
+            notes: "विशेष टिप्पणी / कार्यक्रम",
+            install: "होम स्क्रीन पर जोड़ें",
+            langLabel: "भाषा बदलें",
+            location: "भुवनेश्वर, ओडिशा"
+        },
+        en: {
+            months: ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"],
+            weekdays: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"],
+            subTitle: "Spiritual Wall Calendar 2026",
+            notes: "Notes / Special Events",
+            install: "Add to Home Screen",
+            langLabel: "Change Language",
+            location: "BHUBANESWAR, ODISHA"
+        }
+    };
     const hindiMonths = ["पौष - माघ", "माघ - फाल्गुन", "फाल्गुन - चैत्र", "चैत्र - वैशाख", "वैशाख - ज्येष्ठ", "ज्येष्ठ - आषाढ़", "आषाढ़ - श्रावण", "श्रावण - भाद्रपद", "भाद्रपद - आश्विन", "आश्विन - कार्तिक", "कार्तिक - मार्गशीर्ष", "मार्गशीर्ष - पौष"];
     
     // Exact 2026 Festivals (Major Data)
@@ -404,14 +624,76 @@
         container.innerHTML = html;
     }
 
-    function changeMonth(step) {
-        currentMonth += step;
-        if(currentMonth > 11) { currentMonth = 0; currentYear++; }
-        else if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+    function toggleMenu() {
+        const panel = document.getElementById('sidePanel');
+        const overlay = document.getElementById('overlay');
+        panel.classList.toggle('open');
+        overlay.style.display = panel.classList.contains('open') ? 'block' : 'none';
+    }
+
+    function setLanguage(lang) {
+        currentLang = lang;
+        document.getElementById('btn-hi').classList.toggle('active', lang === 'hi');
+        document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+        
+        // Update Static Text
+        document.getElementById('sub-title').innerText = langData[lang].subTitle;
+        document.querySelector('.notes-header').innerText = langData[lang].notes;
+        document.getElementById('lang-label').innerText = langData[lang].langLabel;
+        document.getElementById('install-label').innerText = langData[lang].install;
+        document.querySelector('.header-sub-details span:nth-child(2)').innerText = langData[lang].location;
+
+        // Update Weekdays Header
+        const weekdayDivs = document.querySelectorAll('.weekday');
+        langData[lang].weekdays.forEach((day, i) => {
+            const enDay = langData['en'].weekdays[i];
+            weekdayDivs[i].innerHTML = lang === 'hi' ? `${day}<br><small>${enDay}</small>` : `${day}`;
+        });
+
+        toggleMenu();
         renderCalendar();
+    }
+
+    function showModal(title, body) {
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalBody').innerHTML = body;
+        document.getElementById('customModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('customModal').style.display = 'none';
+    }
+
+    function addBookmark() {
+        const title = currentLang === 'hi' ? "होम स्क्रीन पर जोड़ें" : "Add to Home Screen";
+        const body = currentLang === 'hi' 
+            ? "1. ब्राउज़र के सबसे ऊपर <b>'Three Dots' (⋮)</b> या <b>'Setting'</b> बटन पर क्लिक करें।<br><br>2. यहाँ <b>'Add to Home Screen'</b> विकल्प को चुनें।"
+            : "1. Click on the <b>'Three Dots' (⋮)</b> or <b>'Setting'</b> button at the top of the browser.<br><br>2. Select the <b>'Add to Home Screen'</b> option here.";
+        
+        toggleMenu();
+        showModal(title, body);
+    }
+
+    function shareApp() {
+        const siteLink = window.location.href;
+        const text = currentLang === 'hi' 
+            ? `*Hindi Calendar 2026*\n\nजय गुरुदेव! यहाँ देखें 2026 का असली हिंदी पंचांग और त्यौहार। इसे अपने फोन पर इंस्टॉल करने के लिए इस लिंक पर क्लिक करें:\n\n${siteLink}`
+            : `*Hindi Calendar 2026*\n\nJai Gurudev! Check out the authentic 2026 Hindi Panchang and Festivals here. Click to install it on your phone:\n\n${siteLink}`;
+        
+        const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+        window.open(waUrl, '_blank');
+        toggleMenu();
     }
 
     renderCalendar();
 </script>
+<!-- Custom Modal -->
+<div id="customModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header" id="modalTitle">सूचना / Information</div>
+        <div class="modal-body" id="modalBody"></div>
+        <button class="modal-btn" onclick="closeModal()">OK</button>
+    </div>
+</div>
 </body>
 </html>
