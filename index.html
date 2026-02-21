@@ -3,39 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jai Gurudev Calendar 2026 v3.1</title>
+    <title>Jai Gurudev Calendar 2026 v3.5</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-red: #b71c1c; /* Deeper, more professional red */
+            --primary-red: #b71c1c;
             --gold: #d4af37;
-            --paper-bg: #fffcf5; /* Parchment like color */
+            --paper-bg: #fffcf5;
             --grid-border: #d1cfc7;
             --text-black: #1a1a1a;
             --header-bg: #fff8e1;
         }
 
-        * {
-            box-sizing: border-box;
-            -webkit-print-color-adjust: exact;
-        }
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; }
 
         body {
             font-family: 'Noto Sans Devanagari', sans-serif;
             background-color: #2c3e50;
             margin: 0;
-            padding: 5px; /* Reduced padding */
+            padding: 5px;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Align to top */
+            align-items: flex-start;
             min-height: 100vh;
-            overflow-y: auto; /* Enable scroll if needed */
+            overflow-y: auto;
         }
 
         .calendar-container {
             width: 100%;
             max-width: 600px;
-            min-height: 98vh; /* Use dynamic height */
+            min-height: 98vh;
             background-color: var(--paper-bg);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             border: 4px double var(--gold);
@@ -56,7 +53,6 @@
             z-index: 10;
         }
 
-        /* --- Side Panel Styles --- */
         .menu-btn {
             position: absolute;
             right: 15px;
@@ -67,342 +63,74 @@
             font-size: 1.8rem;
             color: var(--primary-red);
             cursor: pointer;
-            z-index: 101;
         }
 
+        .om-symbol { font-size: 1rem; color: var(--primary-red); font-weight: bold; letter-spacing: 2px; }
+        .guru-title { font-size: 1.8rem; color: var(--primary-red); font-weight: 700; margin: -2px 0; font-family: 'Oswald', sans-serif; }
+
+        /* --- Side Panel --- */
         .side-panel {
-            position: fixed;
-            top: 0;
-            right: -280px;
-            width: 280px;
-            height: 100%;
-            background: var(--paper-bg); /* Paper texture background */
-            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
-            box-shadow: -5px 0 25px rgba(0,0,0,0.3);
-            z-index: 1000;
-            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 25px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            border-left: 3px double var(--gold);
+            position: fixed; top: 0; right: -280px; width: 280px; height: 100%;
+            background: var(--paper-bg); background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+            box-shadow: -5px 0 25px rgba(0,0,0,0.3); z-index: 1000;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 25px 20px;
+            display: flex; flex-direction: column; gap: 15px; border-left: 3px double var(--gold);
         }
-
         .side-panel.open { right: 0; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 999; }
 
-        .panel-header {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--primary-red);
-            border-bottom: 3px double var(--gold);
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-            text-align: center;
-            font-family: 'Oswald', sans-serif;
-        }
+        .panel-header { font-size: 1.6rem; font-weight: 700; color: var(--primary-red); border-bottom: 3px double var(--gold); padding-bottom: 10px; text-align: center; font-family: 'Oswald', sans-serif; }
+        .menu-item { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: white; border-radius: 10px; cursor: pointer; font-weight: 700; color: #333; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.2s; }
+        .menu-item:active { transform: scale(0.95); }
 
-        .menu-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            background: white;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 700;
-            color: #333;
-            border: 1px solid #eee;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: 0.3s;
-        }
-        .menu-item:active { transform: scale(0.98); background: #fff8e1; }
+        .lang-toggle { display: flex; background: #ddd; border-radius: 20px; overflow: hidden; }
+        .lang-btn { padding: 5px 15px; border: none; cursor: pointer; font-weight: bold; font-size: 0.8rem; }
+        .lang-btn.active { background: var(--primary-red); color: white; }
 
-        /* --- Custom Modal Styles --- */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.7);
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+        /* --- Grid & Navigation --- */
+        .month-header { background: var(--primary-red); color: white; padding: 8px 15px; }
+        .month-nav-row { display: flex; justify-content: space-between; align-items: center; }
+        .nav-btn { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; cursor: pointer; width: 35px; height: 35px; border-radius: 50%; font-size: 1.2rem; }
+        .month-title h2 { margin: 0; font-size: 1.6rem; font-family: 'Oswald', sans-serif; text-align: center; }
+        .month-title span { font-size: 0.9rem; color: #ffd54f; display: block; text-align: center; font-weight: bold; }
+        .header-sub-details { display: flex; justify-content: space-between; font-size: 0.65rem; margin-top: 5px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 5px; }
 
-        .modal-content {
-            background-color: var(--paper-bg);
-            padding: 25px;
-            border: 3px double var(--gold);
-            border-radius: 12px;
-            width: 100%;
-            max-width: 350px;
-            text-align: center;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .modal-header {
-            color: var(--primary-red);
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-        }
-
-        .modal-body {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: #333;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .modal-btn {
-            background: var(--primary-red);
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            z-index: 999;
-        }
-
-        .panel-header {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--primary-red);
-            border-bottom: 2px solid var(--gold);
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-        }
-
-        .menu-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px;
-            background: #f9f9f9;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            color: #333;
-            border: 1px solid #eee;
-        }
-
-        .lang-toggle {
-            display: flex;
-            background: #ddd;
-            border-radius: 20px;
-            overflow: hidden;
-        }
-
-        .lang-btn {
-            padding: 5px 15px;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.8rem;
-        }
-
-        .lang-btn.active {
-            background: var(--primary-red);
-            color: white;
-        }
-
-        .om-symbol {
-            font-size: 1rem; /* Smaller */
-            color: var(--primary-red);
-            font-weight: bold;
-            letter-spacing: 2px;
-        }
-
-        .guru-title {
-            font-size: 1.8rem; /* Scaled down for mobile */
-            color: var(--primary-red);
-            font-weight: 700;
-            margin: -2px 0;
-            text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
-            font-family: 'Oswald', sans-serif;
-        }
-
-        /* --- Month Navigation --- */
-        .month-header {
-            background: var(--primary-red);
-            color: white;
-            padding: 8px 15px;
-        }
-        
-        .month-nav-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-btn {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.4);
-            color: white;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            font-size: 1.2rem;
-            border-radius: 50%;
-            transition: 0.3s;
-        }
-
-        .nav-btn:hover { background: var(--gold); }
-
-        .month-title { text-align: center; }
-        .month-title h2 { margin: 0; font-size: 1.6rem; font-family: 'Oswald', sans-serif; }
-        .month-title span { font-size: 1rem; color: #ffd54f; font-weight: 600; }
-
-        .header-sub-details {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.7rem;
-            margin-top: 5px;
-            padding-top: 5px;
-            border-top: 1px solid rgba(255,255,255,0.2);
-        }
-
-        /* --- Calendar Grid --- */
-        .weekdays {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            background: #f1f1f1;
-            border-bottom: 1px solid var(--grid-border);
-        }
-
-        .weekday {
-            padding: 5px;
-            text-align: center;
-            font-weight: 700;
-            border-right: 1px solid #ddd;
-            font-size: 0.75rem;
-            color: #555;
-        }
-
+        .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); background: #f1f1f1; border-bottom: 1px solid var(--grid-border); }
+        .weekday { padding: 5px; text-align: center; font-weight: 700; font-size: 0.75rem; border-right: 1px solid #ddd; }
         .weekday.sunday { color: var(--primary-red); background: #ffebee; }
 
-        .days-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            flex-grow: 1;
-            background-image: radial-gradient(#d1cfc7 0.5px, transparent 0.5px);
-            background-size: 20px 20px; /* Subtle dots pattern */
-        }
+        .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); flex-grow: 1; }
+        .day-cell { border-right: 1px solid var(--grid-border); border-bottom: 1px solid var(--grid-border); padding: 4px; position: relative; display: flex; flex-direction: column; justify-content: space-between; min-height: 80px; }
+        .day-cell.today { background-color: #fff9c4 !important; border: 2px solid var(--primary-red); z-index: 1; }
+        .en-date { font-family: 'Oswald', sans-serif; font-size: 1.8rem; font-weight: 700; color: var(--text-black); text-align: center; }
+        .sunday .en-date { color: var(--primary-red); }
 
-        .day-cell {
-            border-right: 1px solid var(--grid-border);
-            border-bottom: 1px solid var(--grid-border);
-            padding: 4px;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
+        .tithi { font-size: 0.6rem; text-align: center; color: #444; font-weight: bold; }
+        .festival-text { font-size: 0.55rem; color: #d32f2f; text-align: center; font-weight: bold; background: #ffebee; border-radius: 2px; margin-bottom: 2px; }
+        .paksha-mark { position: absolute; top: 2px; right: 4px; font-size: 0.6rem; font-weight: bold; color: #888; }
 
-        .day-cell.today {
-            background-color: #fff9c4 !important;
-            border: 2px solid var(--primary-red);
-            z-index: 1;
-        }
-
-        .en-date {
-            font-family: 'Oswald', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            line-height: 1;
-            color: var(--text-black);
-            text-align: center;
-        }
-
-        .sunday .en-date, .holiday .en-date { color: var(--primary-red); }
-
-        .tithi {
-            font-size: 0.65rem;
-            text-align: center;
-            color: #444;
-            font-weight: 600;
-            margin-top: 2px;
-        }
-
-        .festival-text {
-            font-size: 0.6rem;
-            color: #d32f2f;
-            text-align: center;
-            font-weight: bold;
-            line-height: 1;
-            background: #ffebee;
-            border-radius: 2px;
-            padding: 1px 0;
-            margin-bottom: 2px;
-        }
-
-        .paksha-mark {
-            position: absolute;
-            top: 2px;
-            right: 4px;
-            font-size: 0.6rem;
-            font-weight: bold;
-            color: #777;
-        }
+        /* --- Modal --- */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: var(--paper-bg); padding: 25px; border: 3px double var(--gold); border-radius: 12px; width: 100%; max-width: 350px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .modal-header { color: var(--primary-red); font-size: 1.3rem; font-weight: 700; margin-bottom: 15px; }
+        .modal-body { font-size: 0.9rem; text-align: left; margin-bottom: 20px; }
+        .modal-btn { background: var(--primary-red); color: white; border: none; padding: 10px 25px; border-radius: 5px; font-weight: bold; cursor: pointer; }
 
         /* --- Footer --- */
-        .footer-section {
-            padding: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: white;
-            border-top: 2px solid var(--gold);
-        }
-
-        .mini-cal { font-size: 0.45rem; width: 80px; }
+        .footer-section { padding: 8px; display: flex; justify-content: space-between; align-items: center; background: white; border-top: 2px solid var(--gold); }
+        .mini-cal { font-size: 0.45rem; width: 75px; }
         .mini-cal table { width: 100%; border-collapse: collapse; }
-        .mini-cal .curr-month-name { font-weight: bold; color: var(--primary-red); display: block; text-align: center; }
-
-        .notes-area {
-            flex: 1;
-            margin: 0 10px;
-            border: 1px dashed var(--gold);
-            padding: 5px;
-            border-radius: 4px;
-        }
-
-        .notes-header { font-size: 0.6rem; font-weight: bold; color: var(--primary-red); text-align: center; margin-bottom: 3px; }
+        .notes-area { flex: 1; margin: 0 8px; border: 1px dashed var(--gold); padding: 5px; border-radius: 4px; }
+        .notes-header { font-size: 0.6rem; font-weight: bold; color: var(--primary-red); text-align: center; }
         .note-line { border-bottom: 1px solid #eee; height: 12px; }
 
-        @media (max-width: 480px) {
-            .guru-title { font-size: 1.8rem; }
-            .en-date { font-size: 1.4rem; }
-            .calendar-container { height: 98vh; }
-        }
     </style>
 </head>
 <body>
 
-    <div class="calendar-container">
-        
-        <!-- Side Panel -->
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
     <div class="side-panel" id="sidePanel">
         <div class="panel-header">Settings / सेटिंग्स</div>
-        
         <div class="menu-item">
             <span id="lang-label">Language / भाषा</span>
             <div class="lang-toggle">
@@ -410,28 +138,21 @@
                 <button class="lang-btn" id="btn-en" onclick="setLanguage('en')">EN</button>
             </div>
         </div>
-
         <div class="menu-item" onclick="addBookmark()">
-            <span id="install-label">Add to Home Screen</span>
-            <span>📲</span>
+            <span id="install-label">Add to Home Screen</span><span>📲</span>
         </div>
-
-        <div class="menu-item" onclick="shareApp()" style="background: #e8f5e9; border-color: #c8e6c9;">
-            <span id="share-label">Share App / शेयर करें</span>
-            <span>📢</span>
+        <div class="menu-item" onclick="shareApp()" style="background: #e8f5e9;">
+            <span id="share-label">Share App / शेयर करें</span><span>📢</span>
         </div>
-
-        <div style="margin-top: auto; font-size: 0.75rem; color: #888; text-align: center; font-weight: 600;">
-            File_name 1.6 | Developed by AJ
-        </div>
+        <div style="margin-top: auto; font-size: 0.7rem; color: #888; text-align: center;">File_name 1.7 | Developed by AJ</div>
     </div>
 
-    <!-- Main Calendar Header -->
-    <div class="top-banner">
+    <div class="calendar-container">
+        <div class="top-banner">
             <button class="menu-btn" onclick="toggleMenu()">☰</button>
             <div class="om-symbol">।। जय गुरुदेव ।।</div>
             <div class="guru-title">JAI GURUDEV</div>
-            <div id="sub-title" style="font-size: 0.75rem; color: #555; font-weight: 600; letter-spacing: 1px;">आध्यात्मिक दीवार कैलेंडर 2026</div>
+            <div id="sub-title" style="font-size: 0.75rem; color: #555; font-weight: 600;">आध्यात्मिक दीवार कैलेंडर 2026</div>
         </div>
 
         <div class="month-header">
@@ -443,22 +164,21 @@
                 </div>
                 <button class="nav-btn" onclick="changeMonth(1)">&#10095;</button>
             </div>
-
             <div class="header-sub-details">
                 <span id="vikram-samvat">विक्रम संवत 2082</span>
-                <span>BHUBANESWAR, ODISHA</span>
+                <span id="loc-display">BHUBANESWAR, ODISHA</span>
                 <span id="saka-era">शाके 1947</span>
             </div>
         </div>
 
-        <div class="weekdays">
-            <div class="weekday sunday">रवि<br>SUN</div>
-            <div class="weekday">सोम<br>MON</div>
-            <div class="weekday">मंगल<br>TUE</div>
-            <div class="weekday">बुध<br>WED</div>
-            <div class="weekday">गुरु<br>THU</div>
-            <div class="weekday">शुक्र<br>FRI</div>
-            <div class="weekday">शनि<br>SAT</div>
+        <div class="weekdays" id="weekdays-container">
+            <div class="weekday sunday">रवि<br><small>SUN</small></div>
+            <div class="weekday">सोम<br><small>MON</small></div>
+            <div class="weekday">मंगल<br><small>TUE</small></div>
+            <div class="weekday">बुध<br><small>WED</small></div>
+            <div class="weekday">गुरु<br><small>THU</small></div>
+            <div class="weekday">शुक्र<br><small>FRI</small></div>
+            <div class="weekday">शनि<br><small>SAT</small></div>
         </div>
 
         <div class="days-grid" id="calendar-grid"></div>
@@ -467,239 +187,118 @@
             <div class="mini-cal" id="prev-mini-cal"></div>
             <div class="notes-area">
                 <div class="notes-header">विशेष टिप्पणी / कार्यक्रम</div>
-                <div class="note-line"></div>
-                <div class="note-line"></div>
-                <div class="note-line"></div>
+                <div class="note-line"></div><div class="note-line"></div><div class="note-line"></div>
             </div>
             <div class="mini-cal" id="next-mini-cal"></div>
         </div>
     </div>
 
+    <div id="customModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modalTitle">सूचना</div>
+            <div class="modal-body" id="modalBody"></div>
+            <button class="modal-btn" onclick="closeModal()">OK</button>
+        </div>
+    </div>
+
 <script>
-    let currentYear = 2026;
-    let currentMonth = 0; 
+    const todayDate = new Date();
+    let currentYear = todayDate.getFullYear();
+    let currentMonth = todayDate.getMonth(); 
     let currentLang = 'hi';
 
     const monthNames = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
-
-    const langData = {
-        hi: {
-            months: ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"],
-            weekdays: ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"],
-            subTitle: "आध्यात्मिक दीवार कैलेंडर 2026",
-            notes: "विशेष टिप्पणी / कार्यक्रम",
-            install: "होम स्क्रीन पर जोड़ें",
-            langLabel: "भाषा बदलें",
-            location: "भुवनेश्वर, ओडिशा"
-        },
-        en: {
-            months: ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"],
-            weekdays: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"],
-            subTitle: "Spiritual Wall Calendar 2026",
-            notes: "Notes / Special Events",
-            install: "Add to Home Screen",
-            langLabel: "Change Language",
-            location: "BHUBANESWAR, ODISHA"
-        }
-    };
     const hindiMonths = ["पौष - माघ", "माघ - फाल्गुन", "फाल्गुन - चैत्र", "चैत्र - वैशाख", "वैशाख - ज्येष्ठ", "ज्येष्ठ - आषाढ़", "आषाढ़ - श्रावण", "श्रावण - भाद्रपद", "भाद्रपद - आश्विन", "आश्विन - कार्तिक", "कार्तिक - मार्गशीर्ष", "मार्गशीर्ष - पौष"];
     
-    // Exact 2026 Festivals (Major Data)
-    const holidays2026 = {
-        "0-14": "मकर संक्रांति",
-        "0-26": "गणतंत्र दिवस",
-        "1-15": "महाशिवरात्रि",
-        "2-4": "होली",
-        "2-19": "गुड़ी पड़वा",
-        "2-26": "राम नवमी",
-        "3-14": "अम्बेडकर जयंती",
-        "3-19": "अक्षय तृतीया",
-        "4-1": "मई दिवस",
-        "6-15": "जगन्नाथ रथ यात्रा",
-        "7-15": "स्वतंत्रता दिवस",
-        "7-28": "रक्षाबंधन",
-        "8-4": "जन्माष्टमी",
-        "9-2": "गांधी जयंती",
-        "9-20": "विजयदशमी",
-        "10-8": "दीपावली",
-        "10-9": "गोवर्धन पूजा",
-        "10-10": "भाई दूज",
-        "11-25": "क्रिसमस"
+    const langData = {
+        hi: { weekdays: ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"], subTitle: "आध्यात्मिक दीवार कैलेंडर 2026", notes: "विशेष टिप्पणी / कार्यक्रम", install: "होम स्क्रीन पर जोड़ें", loc: "भुवनेश्वर, ओडिशा" },
+        en: { weekdays: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], subTitle: "Spiritual Wall Calendar 2026", notes: "Notes / Events", install: "Add to Home Screen", loc: "BHUBANESWAR, ODISHA" }
     };
 
-    // Precise Tithi Logic for 2026 (Based on Jan 1 2026 = Shukla Dwadashi)
+    const holidays2026 = { "0-14": "मकर संक्रांति", "0-26": "गणतंत्र दिवस", "1-15": "महाशिवरात्रि", "2-4": "होली", "2-19": "गुड़ी पड़वा", "2-26": "राम नवमी", "3-14": "अम्बेडकर जयंती", "3-19": "अक्षय तृतीया", "7-15": "स्वतंत्रता दिवस", "7-28": "रक्षाबंधन", "8-4": "जन्माष्टमी", "9-2": "गांधी जयंती", "9-20": "विजयदशमी", "10-8": "दीपावली", "10-9": "गोवर्धन पूजा", "11-25": "क्रिसमस" };
+
     function getTithi2026(date) {
-        const refDate = new Date(2026, 0, 3); // Full Moon (Purnima)
-        const diffTime = date - refDate;
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        
+        const refDate = new Date(2026, 0, 3);
+        let diffDays = Math.floor((date - refDate) / (1000 * 60 * 60 * 24));
         let cyclePos = (diffDays % 29.53059);
         if (cyclePos < 0) cyclePos += 29.53059;
-
         const tithis = ["अमावस्या", "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पूर्णिमा"];
-        
         if (cyclePos < 0.8 || cyclePos > 28.8) return { name: "पूर्णिमा", paksha: "शुक्ल" };
         if (cyclePos >= 14.2 && cyclePos <= 15.3) return { name: "अमावस्या", paksha: "कृष्ण" };
-        
-        if (cyclePos < 14.2) {
-            let idx = Math.ceil(cyclePos);
-            return { name: tithis[idx] || "तृतीया", paksha: "कृष्ण" };
-        } else {
-            let idx = Math.ceil(cyclePos - 14.8);
-            return { name: tithis[idx] || "द्वितीया", paksha: "शुक्ल" };
-        }
+        return cyclePos < 14.2 ? { name: tithis[Math.ceil(cyclePos)] || "तृतीया", paksha: "कृष्ण" } : { name: tithis[Math.ceil(cyclePos - 14.8)] || "द्वितीया", paksha: "शुक्ल" };
     }
 
     function renderCalendar() {
         const grid = document.getElementById('calendar-grid');
-        if (!grid) return;
         grid.innerHTML = "";
-        
         const firstDay = new Date(currentYear, currentMonth, 1).getDay();
         const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
-        const monthDisp = document.getElementById('month-display');
-        const hindiDisp = document.getElementById('hindi-month-display');
-        
-        if (monthDisp) monthDisp.innerText = monthNames[currentMonth] + " " + currentYear;
-        if (hindiDisp) hindiDisp.innerText = hindiMonths[currentMonth];
-        
-        // Samvat Change logic (Chaitra starts in March)
-        let vSamvat = (currentMonth < 2) ? "2082" : "2083";
-        document.getElementById('vikram-samvat').innerText = `विक्रम संवत ${vSamvat}`;
+        document.getElementById('month-display').innerText = `${monthNames[currentMonth]} ${currentYear}`;
+        document.getElementById('hindi-month-display').innerText = hindiMonths[currentMonth];
+        document.getElementById('vikram-samvat').innerText = `विक्रम संवत ${currentMonth < 2 ? "2082" : "2083"}`;
 
-        for(let i=0; i<firstDay; i++) {
-            const cell = document.createElement('div');
-            cell.className = 'day-cell empty';
-            grid.appendChild(cell);
-        }
+        for(let i=0; i<firstDay; i++) { grid.appendChild(Object.assign(document.createElement('div'), {className: 'day-cell empty'})); }
 
-        const realToday = new Date();
-
+        const today = new Date();
         for(let d=1; d<=daysInMonth; d++) {
             const dateObj = new Date(currentYear, currentMonth, d);
-            const dayOfWeek = dateObj.getDay();
-            const dateKey = `${currentMonth}-${d}`;
-            const tithiObj = getTithi2026(dateObj);
-            
+            const tithi = getTithi2026(dateObj);
             const cell = document.createElement('div');
             cell.className = 'day-cell';
-            if(dayOfWeek === 0) cell.classList.add('sunday');
+            if(dateObj.getDay() === 0) cell.classList.add('sunday');
+            if(d===today.getDate() && currentMonth===today.getMonth() && currentYear===today.getFullYear()) cell.classList.add('today');
 
-            let fest = holidays2026[dateKey] || "";
-            if(tithiObj.name === "एकादशी") fest = fest ? fest : "एकादशी";
-
-            if (d === realToday.getDate() && currentMonth === realToday.getMonth() && currentYear === realToday.getFullYear()) {
-                cell.classList.add('today');
-            }
-
-            cell.innerHTML = `
-                <div class="paksha-mark">${tithiObj.paksha.charAt(0)}</div>
-                <div class="en-date">${d}</div>
-                <div>
-                    ${fest ? `<div class="festival-text">${fest}</div>` : ''}
-                    <div class="tithi">${tithiObj.name}</div>
-                </div>
-            `;
+            let fest = holidays2026[`${currentMonth}-${d}`] || (tithi.name === "एकादशी" ? "एकादशी" : "");
+            cell.innerHTML = `<div class="paksha-mark">${tithi.paksha.charAt(0)}</div><div class="en-date">${d}</div><div>${fest ? `<div class="festival-text">${fest}</div>` : ''}<div class="tithi">${tithi.name}</div></div>`;
             grid.appendChild(cell);
         }
-
         renderMiniCal(currentMonth - 1, 'prev-mini-cal');
         renderMiniCal(currentMonth + 1, 'next-mini-cal');
     }
 
-    function renderMiniCal(mIndex, elemId) {
-        let y = currentYear;
-        if(mIndex < 0) { mIndex = 11; y--; }
-        if(mIndex > 11) { mIndex = 0; y++; }
-        const container = document.getElementById(elemId);
-        const fDay = new Date(y, mIndex, 1).getDay();
-        const lDay = new Date(y, mIndex + 1, 0).getDate();
-        let html = `<span class="curr-month-name">${monthNames[mIndex].substring(0,3)}</span><table><tr>`;
-        const days = ['S','M','T','W','T','F','S'];
-        days.forEach(d => html += `<th>${d}</th>`);
+    function renderMiniCal(mIdx, id) {
+        let y = currentYear, m = mIdx;
+        if(m < 0) { m = 11; y--; } else if(m > 11) { m = 0; y++; }
+        const fDay = new Date(y, m, 1).getDay(), lDay = new Date(y, m + 1, 0).getDate();
+        let html = `<span style="font-weight:bold;color:var(--primary-red);text-align:center;display:block;">${monthNames[m].substring(0,3)}</span><table><tr>`;
+        ['S','M','T','W','T','F','S'].forEach(d => html += `<th>${d}</th>`);
         html += `</tr><tr>`;
-        let cells = 0;
-        for(let i=0; i<fDay; i++) { html += `<td></td>`; cells++; }
-        for(let d=1; d<=lDay; d++) {
-            html += `<td style="${cells%7===0?'color:red':''}">${d}</td>`;
-            cells++;
-            if(cells%7===0) html += `</tr><tr>`;
-        }
-        html += `</tr></table>`;
-        container.innerHTML = html;
+        for(let i=0; i<fDay; i++) html += `<td></td>`;
+        for(let d=1; d<=lDay; d++) { html += `<td>${d}</td>`; if((fDay+d)%7===0) html += `</tr><tr>`; }
+        document.getElementById(id).innerHTML = html + `</tr></table>`;
     }
 
-    function toggleMenu() {
-        const panel = document.getElementById('sidePanel');
-        const overlay = document.getElementById('overlay');
-        panel.classList.toggle('open');
-        overlay.style.display = panel.classList.contains('open') ? 'block' : 'none';
+    function changeMonth(s) { currentMonth += s; if(currentMonth>11){currentMonth=0; currentYear++;} else if(currentMonth<0){currentMonth=11; currentYear--;} renderCalendar(); }
+    function toggleMenu() { const p = document.getElementById('sidePanel'), o = document.getElementById('overlay'); p.classList.toggle('open'); o.style.display = p.classList.contains('open') ? 'block' : 'none'; }
+    
+    function setLanguage(l) {
+        currentLang = l;
+        document.getElementById('btn-hi').classList.toggle('active', l==='hi');
+        document.getElementById('btn-en').classList.toggle('active', l==='en');
+        document.getElementById('sub-title').innerText = langData[l].subTitle;
+        document.querySelector('.notes-header').innerText = langData[l].notes;
+        document.getElementById('loc-display').innerText = langData[l].loc;
+        const divs = document.querySelectorAll('.weekday');
+        langData[l].weekdays.forEach((d, i) => divs[i].innerHTML = l==='hi' ? `${d}<br><small>${langData.en.weekdays[i]}</small>` : d);
+        toggleMenu(); renderCalendar();
     }
 
-    function setLanguage(lang) {
-        currentLang = lang;
-        document.getElementById('btn-hi').classList.toggle('active', lang === 'hi');
-        document.getElementById('btn-en').classList.toggle('active', lang === 'en');
-        
-        // Update Static Text
-        document.getElementById('sub-title').innerText = langData[lang].subTitle;
-        document.querySelector('.notes-header').innerText = langData[lang].notes;
-        document.getElementById('lang-label').innerText = langData[lang].langLabel;
-        document.getElementById('install-label').innerText = langData[lang].install;
-        document.querySelector('.header-sub-details span:nth-child(2)').innerText = langData[lang].location;
-
-        // Update Weekdays Header
-        const weekdayDivs = document.querySelectorAll('.weekday');
-        langData[lang].weekdays.forEach((day, i) => {
-            const enDay = langData['en'].weekdays[i];
-            weekdayDivs[i].innerHTML = lang === 'hi' ? `${day}<br><small>${enDay}</small>` : `${day}`;
-        });
-
-        toggleMenu();
-        renderCalendar();
-    }
-
-    function showModal(title, body) {
-        document.getElementById('modalTitle').innerText = title;
-        document.getElementById('modalBody').innerHTML = body;
-        document.getElementById('customModal').style.display = 'flex';
-    }
-
-    function closeModal() {
-        document.getElementById('customModal').style.display = 'none';
-    }
+    function showModal(t, b) { document.getElementById('modalTitle').innerText = t; document.getElementById('modalBody').innerHTML = b; document.getElementById('customModal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('customModal').style.display = 'none'; }
 
     function addBookmark() {
-        const title = currentLang === 'hi' ? "होम स्क्रीन पर जोड़ें" : "Add to Home Screen";
-        const body = currentLang === 'hi' 
-            ? "1. ब्राउज़र के सबसे ऊपर <b>'Three Dots' (⋮)</b> या <b>'Setting'</b> बटन पर क्लिक करें।<br><br>2. यहाँ <b>'Add to Home Screen'</b> विकल्प को चुनें।"
-            : "1. Click on the <b>'Three Dots' (⋮)</b> or <b>'Setting'</b> button at the top of the browser.<br><br>2. Select the <b>'Add to Home Screen'</b> option here.";
-        
-        toggleMenu();
-        showModal(title, body);
+        const body = currentLang === 'hi' ? "1. ब्राउज़र के सबसे ऊपर <b>'Three Dots' (⋮)</b> या <b>'Setting'</b> बटन पर क्लिक करें।<br><br>2. यहाँ <b>'Add to Home Screen'</b> विकल्प को चुनें।" : "1. Click on <b>'Three Dots' (⋮)</b> or <b>'Setting'</b> at the top.<br><br>2. Select <b>'Add to Home Screen'</b>.";
+        toggleMenu(); showModal(currentLang==='hi'?"होम स्क्रीन":"Add Home", body);
     }
 
     function shareApp() {
-        const siteLink = window.location.href;
-        const text = currentLang === 'hi' 
-            ? `*Hindi Calendar 2026*\n\nजय गुरुदेव! यहाँ देखें 2026 का असली हिंदी पंचांग और त्यौहार। इसे अपने फोन पर इंस्टॉल करने के लिए इस लिंक पर क्लिक करें:\n\n${siteLink}`
-            : `*Hindi Calendar 2026*\n\nJai Gurudev! Check out the authentic 2026 Hindi Panchang and Festivals here. Click to install it on your phone:\n\n${siteLink}`;
-        
-        const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
-        window.open(waUrl, '_blank');
+        const text = `*Hindi Calendar 2026*\nजय गुरुदेव! 2026 का असली पंचांग यहाँ देखें:\n${window.location.href}`;
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
         toggleMenu();
     }
 
     renderCalendar();
 </script>
-<!-- Custom Modal -->
-<div id="customModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header" id="modalTitle">सूचना / Information</div>
-        <div class="modal-body" id="modalBody"></div>
-        <button class="modal-btn" onclick="closeModal()">OK</button>
-    </div>
-</div>
 </body>
 </html>
