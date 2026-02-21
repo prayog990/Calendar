@@ -422,12 +422,12 @@
         </div>
 
         <div style="margin-top: auto; font-size: 0.75rem; color: #888; text-align: center; font-weight: 600;">
-            File_name 1.4 | Developed by AJ
+            File_name 1.6 | Developed by AJ
         </div>
     </div>
 
-    <div class="calendar-container">
-        <div class="top-banner">
+    <!-- Main Calendar Header -->
+    <div class="top-banner">
             <button class="menu-btn" onclick="toggleMenu()">☰</button>
             <div class="om-symbol">।। जय गुरुदेव ।।</div>
             <div class="guru-title">JAI GURUDEV</div>
@@ -479,6 +479,8 @@
     let currentYear = 2026;
     let currentMonth = 0; 
     let currentLang = 'hi';
+
+    const monthNames = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
 
     const langData = {
         hi: {
@@ -550,13 +552,17 @@
 
     function renderCalendar() {
         const grid = document.getElementById('calendar-grid');
+        if (!grid) return;
         grid.innerHTML = "";
         
         const firstDay = new Date(currentYear, currentMonth, 1).getDay();
         const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
-        document.getElementById('month-display').innerText = `${monthNames[currentMonth]} ${currentYear}`;
-        document.getElementById('hindi-month-display').innerText = hindiMonths[currentMonth];
+        const monthDisp = document.getElementById('month-display');
+        const hindiDisp = document.getElementById('hindi-month-display');
+        
+        if (monthDisp) monthDisp.innerText = monthNames[currentMonth] + " " + currentYear;
+        if (hindiDisp) hindiDisp.innerText = hindiMonths[currentMonth];
         
         // Samvat Change logic (Chaitra starts in March)
         let vSamvat = (currentMonth < 2) ? "2082" : "2083";
